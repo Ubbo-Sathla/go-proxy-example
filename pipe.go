@@ -11,7 +11,7 @@ func Pipe(a, b net.Conn) error {
 
 	cp := func(r, w net.Conn) {
 		n, err := io.Copy(r, w)
-		logger.Debugf("copied %d bytes from %s to %s", n, r.RemoteAddr(), w.RemoteAddr())
+		log.Debugf("copied %d bytes from %s to %s", n, r.RemoteAddr(), w.RemoteAddr())
 		done <- err
 	}
 

@@ -40,16 +40,16 @@ func (p *Proxy) Close() error {
 
 func (p *Proxy) handle(upConn net.Conn) {
 	defer upConn.Close()
-	logger.Infof("accepted: %s", upConn.RemoteAddr())
+	log.Infof("accepted: %s", upConn.RemoteAddr())
 	downConn, err := net.Dial("tcp", p.Backend)
 	if err != nil {
-		logger.Errorf("unable to connect to %s: %s", p.Backend, err)
+		log.Errorf("unable to connect to %s: %s", p.Backend, err)
 		return
 	}
 	defer downConn.Close()
 	if err := Pipe(upConn, downConn); err != nil {
-		logger.Errorf("pipe failed: %s", err)
+		log.Errorf("pipe failed: %s", err)
 	} else {
-		logger.Infof("disconnected: %s", upConn.RemoteAddr())
+		log.Infof("disconnected: %s", upConn.RemoteAddr())
 	}
 }

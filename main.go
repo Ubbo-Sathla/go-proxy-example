@@ -3,22 +3,25 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/BlueDragonX/go-log"
+	"github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 	"syscall"
 )
 
-var logger *log.Logger = log.NewOrExit()
+var log = logrus.New()
+
+func init() {
+	log.SetLevel(logrus.TraceLevel)
+
+}
 
 func main() {
-	var level, listen, backend string
+	var listen, backend string
 	flags := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	flags.StringVar(&listen, "listen", "", "Listen for connections on this address.")
 	flags.StringVar(&backend, "backend", "", "The address of the backend to forward to.")
-	flags.StringVar(&level, "level", "info", "The logging level.")
 	flags.Parse(os.Args[1:])
-	logger.SetLevel(log.NewLevel(level))
 
 	if listen == "" || backend == "" {
 		fmt.Fprintln(os.Stderr, "listen and backend options required")
@@ -32,11 +35,11 @@ func main() {
 	go func() {
 		<-sigs
 		if err := p.Close(); err != nil {
-			logger.Fatal(err.Error())
+			log.Fatal(err.Error())
 		}
 	}()
 
 	if err := p.Run(); err != nil {
-		logger.Fatal(err.Error())
+		log.Fatal(err.Error())
 	}
 }
